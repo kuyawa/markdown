@@ -10,7 +10,7 @@ Use:
 
 Simple huh?
 
-It uses RegularExpressions, eat babies and kick kitties, and it is not O log N whatever optimized, but it works without importing a thousand external libraries and that's all it counts.
+It uses RegularExpressions everywhere, eat babies and kick kitties, and it is not O log N whatever optimized, but it works without importing a thousand external libraries and that's all it counts.
 
 All you need is this simple and beautiful file [markdown.swift](https://github.com/kuyawa/markdown/blob/master/Markdown/Markdown.swift)
 
