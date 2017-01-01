@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3D524C0D1E180A6800F90AC2 /* Style.html in Resources */ = {isa = PBXBuildFile; fileRef = 3D524C0C1E180A6800F90AC2 /* Style.html */; };
+		3D5ADBA51E194AAA00B7AC17 /* catvatar.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3D5ADBA41E194AAA00B7AC17 /* catvatar.jpg */; };
 		3DB61BB81E1728AC0081148D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB61BB71E1728AC0081148D /* AppDelegate.swift */; };
 		3DB61BBA1E1728AC0081148D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB61BB91E1728AC0081148D /* ViewController.swift */; };
 		3DB61BBC1E1728AD0081148D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3DB61BBB1E1728AD0081148D /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		3D524C0C1E180A6800F90AC2 /* Style.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Style.html; sourceTree = "<group>"; };
+		3D5ADBA41E194AAA00B7AC17 /* catvatar.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = catvatar.jpg; sourceTree = "<group>"; };
 		3DB61BB41E1728AB0081148D /* Markdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Markdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DB61BB71E1728AC0081148D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3DB61BB91E1728AC0081148D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				3DB61BC81E17302B0081148D /* Markdown.swift */,
 				3D524C0C1E180A6800F90AC2 /* Style.html */,
 				3DFC5C031E17468900896CD7 /* Test.html */,
+				3D5ADBA41E194AAA00B7AC17 /* catvatar.jpg */,
 				3DB61BBD1E1728AE0081148D /* Main.storyboard */,
 				3DB61BBB1E1728AD0081148D /* Assets.xcassets */,
 			);
@@ -134,6 +137,7 @@
 				3DB61BBC1E1728AD0081148D /* Assets.xcassets in Resources */,
 				3DB61BBF1E1728AE0081148D /* Main.storyboard in Resources */,
 				3D524C0D1E180A6800F90AC2 /* Style.html in Resources */,
+				3D5ADBA51E194AAA00B7AC17 /* catvatar.jpg in Resources */,
 				3DFC5C041E17468900896CD7 /* Test.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

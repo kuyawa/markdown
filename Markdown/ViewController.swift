@@ -21,15 +21,16 @@ class ViewController: NSViewController {
     }
 
     func testMarkdown() {
-        let url   = Bundle.main.url(forResource: "Test", withExtension: "html")
+        let url   = Bundle.main.url(forResource: "Test",  withExtension: "html")
         let style = Bundle.main.url(forResource: "Style", withExtension: "html")
+        let base  = URL(fileURLWithPath: url!.path)
         let css   = try! String(contentsOf: style!)
         let mkdn  = try! String(contentsOf: url!)
         let html  = Markdown().parse(mkdn)
 
         textMark.string = mkdn
         textHtml.string = html
-        textView.mainFrame.loadHTMLString(css+html, baseURL: URL(string: "."))
+        textView.mainFrame.loadHTMLString(css+html, baseURL: base)
     }
 
 }

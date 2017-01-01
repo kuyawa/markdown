@@ -1,23 +1,31 @@
 //
 //  Markdown.swift
-//  Markdown
-//
-//  Created by Mac Mini on 12/30/16.
-//  Copyright © 2016 Armonia. All rights reserved.
+//  Created by Kuyawa on 2016/12/30
 //
 
 import Foundation
 
-/*
- 
- TODO: Paragraphs
- - insert p and br tags for paragraphs, loop all lines?
- - if line does not start with < consider it a starting paragraph
- - if it ends in double newline consider it an end of paragraph (furst pass before BR)
- - if it ends in a single newline without block tag consider it a BR tag
- 
- */
 
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+    import Darwin
+#elseif os(Linux)
+    import Glibc
+#endif
+
+
+// Linux compatibility
+#if os(Linux)
+    typealias NSRegularExpression = RegularExpression
+    typealias NSTextCheckingResult = TextCheckingResult
+    extension TextCheckingResult {
+        func rangeAt(_ n: Int) -> NSRange {
+            return self.range(at: n)
+        }
+    }
+#endif
+
+
+// Useful extensions
 extension String {
     func trim() -> String {
         return self.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -91,127 +99,66 @@ class Markdown {
         md.matchAndReplace("<.*?>", "")
     }
     
-    func cleanBreaks() {
-        //
-    }
-    
     func parseHeaders(_ md: inout NSMutableString) {
-        md.matchAndReplace("^###(.*)?", "<h3>$1</h3>", options: [.anchorsMatchLines])
-        md.matchAndReplace("^##(.*)?", "<h2>$1</h2>", options: [.anchorsMatchLines])
-        md.matchAndReplace("^#(.*)?", "<h1>$1</h1>", options: [.anchorsMatchLines])
+        md.matchAndReplace("^###(.*)?", "<h3>$1</h3>", options: [.anchorsMatchLines])   // ### Title H3
+        md.matchAndReplace("^##(.*)?", "<h2>$1</h2>", options: [.anchorsMatchLines])    // ## Title H2
+        md.matchAndReplace("^#(.*)?", "<h1>$1</h1>", options: [.anchorsMatchLines])     // # Title H1
     }
     
     func parseBold(_ md: inout NSMutableString) {
-        md.matchAndReplace("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
+        md.matchAndReplace("\\*\\*(.*?)\\*\\*", "<b>$1</b>")    // this is **bold** see?
     }
     
     func parseItalic(_ md: inout NSMutableString) {
-        md.matchAndReplace("\\*(.*?)\\*", "<i>$1</i>")
+        md.matchAndReplace("\\*(.*?)\\*", "<i>$1</i>")          // this is *italic* see?
     }
     
     func parseDeleted(_ md: inout NSMutableString) {
-        md.matchAndReplace("~~(.*?)~~", "<s>$1</s>")
+        md.matchAndReplace("~~(.*?)~~", "<s>$1</s>")            // this is ~~deleted~~ see?
     }
     
     func parseImages(_ md: inout NSMutableString) {
-        md.matchAndReplace("!\\[(\\d+)x(\\d+)\\]\\((.*?)\\)", "<img src=\"$3\" width=\"$1\" height=\"$2\" />")
-        md.matchAndReplace("!\\[(.*?)\\]\\((.*?)\\)", "<img alt=\"$1\" src=\"$2\" />")
+        md.matchAndReplace("!\\[(\\d+)x(\\d+)\\]\\((.*?)\\)", "<img src=\"$3\" width=\"$1\" height=\"$2\" />")  // ![300x200](kitty.jpg)
+        md.matchAndReplace("!\\[(.*?)\\]\\((.*?)\\)", "<img alt=\"$1\" src=\"$2\" />")                          // ![Cute Cat](kitty.jpg)
     }
     
     func parseLinks(_ md: inout NSMutableString) {
-        md.matchAndReplace("\\[(.*?)\\]\\((.*?)\\)", "<a href=\"$2\">$1</a>")
-        md.matchAndReplace("\\[http(.*?)\\]", "<a href=\"http$1\">http$1</a>")
-        md.matchAndReplace("\\shttp(.*?)\\s", " <a href=\"http$1\">http$1</a> ")
+        md.matchAndReplace("\\[(.*?)\\]\\((.*?)\\)", "<a href=\"$2\">$1</a>")       // [Swift](http://swift.org)
+        md.matchAndReplace("\\[http(.*?)\\]", "<a href=\"http$1\">http$1</a>")      // [http://swift.org]
+        md.matchAndReplace("\\shttp(.*?)\\s", " <a href=\"http$1\">http$1</a> ")    // http://swift.org
     }
     
     func parseUnorderedLists(_ md: inout NSMutableString) {
         //md.matchAndReplace("^\\*(.*)?", "<li>$1</li>", options: [.anchorsMatchLines])
-        parseBlock(&md, format: "^\\*", blockEnclose: ("<ul>", "</ul>"), lineEnclose: ("<li>", "</li>"))
+        parseBlock(&md, format: "^\\*", blockEnclose: ("<ul>", "</ul>"), lineEnclose: ("<li>", "</li>"))            // * unordered lists
     }
     
     func parseOrderedLists(_ md: inout NSMutableString) {
-        parseBlock(&md, format: "^\\d+[\\.|-]", blockEnclose: ("<ol>", "</ol>"), lineEnclose: ("<li>", "</li>"))
+        parseBlock(&md, format: "^\\d+[\\.|-]", blockEnclose: ("<ol>", "</ol>"), lineEnclose: ("<li>", "</li>"))    // 1. ordered lists
     }
     
     func parseBlockquotes(_ md: inout NSMutableString) {
         //md.matchAndReplace("^>(.*)?", "<blockquote>$1</blockquote>", options: [.anchorsMatchLines])
-        parseBlock(&md, format: "^>", blockEnclose: ("<blockquote>", "</blockquote>"))
-        parseBlock(&md, format: "^:", blockEnclose: ("<blockquote>", "</blockquote>"))
+        parseBlock(&md, format: "^>", blockEnclose: ("<blockquote>", "</blockquote>"))  // > Some quote
+        parseBlock(&md, format: "^:", blockEnclose: ("<blockquote>", "</blockquote>"))  // : Some quote
     }
     
     func parseCodeBlock(_ md: inout NSMutableString) {
-        md.matchAndReplace("```(.*?)```", "<pre>$1</pre>", options: [.dotMatchesLineSeparators])
-        parseBlock(&md, format: "^\\s{4}", blockEnclose: ("<pre>", "</pre>"))
+        md.matchAndReplace("```(.*?)```", "<pre>$1</pre>", options: [.dotMatchesLineSeparators])    // ````let swift = "awesome"````
+        parseBlock(&md, format: "^\\s{4}", blockEnclose: ("<pre>", "</pre>"))                       //     let swift = "awesome"
     }
     
     func parseCodeInline(_ md: inout NSMutableString) {
-        md.matchAndReplace("`(.*?)`", "<code>$1</code>")
+        md.matchAndReplace("`(.*?)`", "<code>$1</code>")    // `let swift = "awesome"`
     }
     
     func parseHorizontalRule(_ md: inout NSMutableString) {
-        md.matchAndReplace("---", "<hr>")
+        md.matchAndReplace("---", "<hr>")   // --- rule here
     }
-    
-    func parseParagraphsBR(_ md: inout NSMutableString) {
-        md.matchAndReplace("^([^<|^\\s<])(.*?)$", "$1$2<br>", options: [.anchorsMatchLines])
-        md.matchAndReplace("^$", "<br>", options: [.anchorsMatchLines])
-        //md.matchAndReplace("(<pre>.*?)<br>(.*?</pre>)", "$1$2", options: [.dotMatchesLineSeparators])
-        md.matchAndReplace("(<pre>^(<br>).*?</pre>)", "$0|$1|$2|$3", options: [.dotMatchesLineSeparators])
-        //cleanBreaks("pre")
-    }
-
-    /*
-    func parseParagraphsBR2(_ md: inout NSMutableString) {
-        let lines = md.components(separatedBy: .newlines)
-        var result = [String]()
-        
-        for line in lines {
-            if !line.hasPrefix("<") {
-                result.append(line.append("<br>"))
-            } else {
-                result.append(line)
-            }
-        }
-        
-        md = NSMutableString(string: result.joined(separator: "\n"))
-    }
-    */
     
     func parseParagraphs(_ md: inout NSMutableString) {
-        md.matchAndReplace("\n([^\n]+)\n", "\n<p>$1</p>\n", options: [.anchorsMatchLines])
+        md.matchAndReplace("\n\n([^\n]+)\n\n", "\n\n<p>$1</p>\n\n", options: [.dotMatchesLineSeparators])
     }
-    
-    /*
-    func parseParagraphs(_ md: inout NSMutableString) {
-        let lines = md.components(separatedBy: .newlines)
-        var result = [String]()
-        var isBlock = false
-        var isFirst = true
-        
-        for line in lines {
-            var text = line
-            
-            if text.hasPrefix("<") || text.trim().isEmpty {
-                isBlock = false
-                isFirst = true
-                result.append("</p>")
-                //result.append(text)
-            } else {
-                isBlock = true
-                if isFirst { result.append("<p>"); isFirst = false }
-                if !text.trim().isEmpty {
-                    text = text.append("<br>")
-                }
-            }
-
-            result.append(text)
-        }
-        
-        if isBlock { result.append("</p>") } // close open blocks
-        
-        md = NSMutableString(string: result.joined(separator: "\n"))
-    }
-    */
     
     func parseBlock(_ md: inout NSMutableString, format: String, blockEnclose: (String, String), lineEnclose: (String, String)? = nil) {
         let lines = md.components(separatedBy: .newlines)
@@ -229,7 +176,7 @@ class Markdown {
             } else if isBlock {
                 isBlock = false
                 isFirst = true
-                text = text.append(blockEnclose.1)
+                text = text.append(blockEnclose.1+"\n")
             }
             result.append(text)
         }
@@ -241,3 +188,5 @@ class Markdown {
     
 }
 
+
+// End
