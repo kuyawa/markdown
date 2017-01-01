@@ -92,7 +92,7 @@ class Markdown {
         parseHorizontalRule(&md)
         parseParagraphs(&md)
         
-        return String(md)
+        return String(describing: md)
     }
     
     func cleanHtml(_ md: inout NSMutableString) {
