@@ -1,6 +1,6 @@
 # Markdown in Swift
 
-This library parses Markdown in Swift without any external resources.
+This library parses Markdown in Swift without any external resources. Linux compatible.
 
 Use:
 
